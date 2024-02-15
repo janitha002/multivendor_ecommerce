@@ -1,53 +1,49 @@
-import logo from '../logo.svg';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import SingleProduct from './SingleProduct';
-import { useState,useEffect } from 'react';
-function AllProducts(){
-    const baseUrl='http://127.0.0.1:8000/api';
-    const [Products,setProducts]=useState([]);
-    const [totalResult,setTotalResults]=useState(0);
+import { useState, useEffect } from 'react';
 
-    
+function AllProducts() {
+    const baseUrl = 'http://127.0.0.1:8000/api';
+    const [products, setProducts] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalResults, setTotalResults] = useState(0);
+
     useEffect(() => {
-        fetchData(baseUrl+'/products');
-    });
+        fetchData(`${baseUrl}/products/?page=${currentPage}`);
+    }, [currentPage]); // Fetch data when currentPage changes
 
-    function fetchData(baseurl){
-        fetch(baseurl)
-        .then((response) => response.json()) // parse the JSON data
-        .then((data) => {
-            setProducts(data.results);
-            setTotalResults(data.count);
-        });
+    function fetchData(url) {
+        fetch(url)
+            .then((response) => response.json()) // parse the JSON data
+            .then((data) => {
+                setProducts(data.results);
+                setTotalResults(data.count);
+            });
     }
 
-    function changeUrl(baseurl){
-        fetchData(baseurl);
+    function handlePageChange(pageNumber) {
+        setCurrentPage(pageNumber);
     }
 
-    var links=[];
-    for(let i=1; i<=totalResult; i++){
-        links.push(<li class="page-item"><Link onClick={()=>changeUrl(baseUrl+'/products/?peag=${i}')} to={'/products/?peag=${i}'} class="page-link">{i}</Link></li>)
-    }
+    const totalPages = Math.ceil(totalResults); // Assuming 1 item per page
 
     return (
         <section className='container mt-4'>
-        <h2 className='mb-4'>All Products</h2>
+            <h2 className='mb-4'>All Products</h2>
             <div className='row mb-4'>
-                {
-                    Products.map((product) => <SingleProduct product={product} />)
-                }
-                
+                {products.map((product) => <SingleProduct key={product.id} product={product} />)}
             </div>
-            
             <nav aria-label="Page navigation example">
-                <ul class="pagination">
-                    {links}
+                <ul className="pagination">
+                    {[...Array(totalPages).keys()].map((page) => (
+                        <li className="page-item" key={page + 1}>
+                            <Link onClick={() => handlePageChange(page + 1)} to={`/products/?page=${page + 1}`} className="page-link">{page + 1}</Link>
+                        </li>
+                    ))}
                 </ul>
             </nav>
-
         </section>
-    )
+    );
 }
 
 export default AllProducts;
