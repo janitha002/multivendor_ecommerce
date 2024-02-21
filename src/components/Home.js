@@ -2,20 +2,33 @@ import {Link} from 'react-router-dom';
 import logo from '../logo.svg';
 import SingleProduct from './SingleProduct';
 function Home(){
+    const products=[
+        {
+            'title':'product 1',
+            'price':100
+        },
+        {
+            'title':'product 2',
+            'price':100
+        },
+        {
+            'title':'product 3',
+            'price':100
+        },
+        {
+            'title':'product 4',
+            'price':100
+        },
+    ]
     return (
     <main className='mt-4'>
             <div className='container'>
             {/* Latest Products */}
             <h2 className='mb-4'>Latest Products <Link to='/products'className='float-end btn btn-dark'>View All Products <i class="fa-solid fa-arrow-right-long"></i></Link></h2>
             <div className='row mb-4'>
-                <SingleProduct title="Django Project 1" />
-                <SingleProduct title="Django Project 1" />
-                <SingleProduct title="Django Project 1" />
-                <SingleProduct title="Django Project 1" />
-                <SingleProduct title="Django Project 1" />
-                <SingleProduct title="Django Project 1" />
-                <SingleProduct title="Django Project 1" />
-                <SingleProduct title="Django Project 1" />   
+                {
+                    products.map((product)=> <SingleProduct product={product} />) 
+                }   
             </div>
             {/* End Latest Products */}
 
